@@ -20,11 +20,15 @@ struct GameView: View {
                 Text("\(winner.marker) wins!")
                     .font(.title)
                     .padding()
+            } else if game.isTieGame {
+                Text("Cats game")
+                    .font(.title)
+                    .padding()
             }
 
             BoardView(game: $game)
 
-            if game.winner != nil {
+            if game.winner != nil || game.isTieGame {
                 Button(action: {
                     game.resetGame()
                 }) {
@@ -70,6 +74,7 @@ struct Game {
         return players[currentPlayerIndex]
     }
     var winner: Player?
+    var isTieGame: Bool = false
 
     private let rows: Int
     private let cols: Int
@@ -91,6 +96,7 @@ struct Game {
 
     mutating func resetGame() {
         winner = nil
+        isTieGame = false
         for i in board.indices {
             for j in board[i].indices {
                 board[i][j] = nil
@@ -157,6 +163,19 @@ struct Game {
             winner = potentialWinner
             return
         }
+
+        // Check if there is a tie
+        var tieGameCheck = true
+        for i in 0..<rows {
+            for j in 0..<cols {
+                if board[i][j] == nil {
+                    tieGameCheck = false
+                    break
+                }
+            }
+        }
+
+        isTieGame = tieGameCheck
     }
 
     init?(rows: Int = 3,

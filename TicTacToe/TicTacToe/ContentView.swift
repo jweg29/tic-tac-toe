@@ -10,28 +10,28 @@ import SwiftUI
 struct GameView: View {
     @State var game: Game
 
-    var titleText: String {
-        if let winner = game.winner {
-            "\(winner.marker) wins!"
-        } else {
-            "Tic Tac Toe"
-        }
-    }
-
     var body: some View {
         VStack {
-            Text(titleText)
+            Text("Tic Tac Toe")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+
+            if let winner = game.winner {
+                Text("\(winner.marker) wins!")
+                    .font(.title)
+                    .padding()
+            }
+
             BoardView(game: $game)
 
-            Button(action: {
-                game.resetGame()
-            }) {
-                Text("Reset")
+            if game.winner != nil {
+                Button(action: {
+                    game.resetGame()
+                }) {
+                    Text("New game")
+                }
+                .padding()
             }
-            .padding()
         }
         .padding()
     }
@@ -78,7 +78,7 @@ struct Game {
 
     mutating func advanceTurn() {
         checkGameState()
-        
+
         if winner != nil {
             return
         }
@@ -160,21 +160,21 @@ struct Game {
     }
 
     init?(rows: Int = 3,
-         cols: Int = 3,
-         players: [Player] =
-         [.init(color: .red, marker: "X"),
-          .init(color: .blue, marker: "O")]) {
-              var standardBoard = [[Player?]].init(repeating: [Player?](), count: rows)
+          cols: Int = 3,
+          players: [Player] =
+          [.init(color: .red, marker: "X"),
+           .init(color: .blue, marker: "O")]) {
+               var standardBoard = [[Player?]].init(repeating: [Player?](), count: rows)
 
-              for i in 0 ..< rows {
-                  standardBoard[i] = [Player?].init(repeating: nil, count: cols)
-              }
+               for i in 0 ..< rows {
+                   standardBoard[i] = [Player?].init(repeating: nil, count: cols)
+               }
 
-              self.rows = rows
-              self.cols = cols
-              self.players = players
-              self.board = standardBoard
-          }
+               self.rows = rows
+               self.cols = cols
+               self.players = players
+               self.board = standardBoard
+           }
 }
 
 struct Player: Equatable {
